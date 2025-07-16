@@ -1,1 +1,1 @@
-# exercise-tracker
+# Exercise Analyzer Project
