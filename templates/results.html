@@ -183,6 +183,38 @@
             font-size: 0.9em;
         }
 
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .results-content {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -208,56 +240,55 @@
 </head>
 <body>
     <div class="container">
-        <div class="results-header">
-            <h1>🏋️ Exercise Analysis</h1>
-            <p>Your workout performance results</p>
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Processing your exercise analysis...</div>
         </div>
 
-        <div class="score-section">
-            <div class="score-circle {{ 'score-excellent' if mark >= 8 else 'score-good' if mark >= 5 else 'score-poor' }}">
-                <div>
-                    {{ "%.1f"|format(mark) }}
-                    <div class="score-text">/ 10</div>
+        <div class="results-content" id="results">
+            <div class="results-header">
+                <h1>🏋️ Exercise Analysis</h1>
+                <p>Your workout performance results</p>
+            </div>
+
+            <div class="score-section">
+                <div class="score-circle" id="scoreCircle">
+                    <div>
+                        <span id="scoreValue">-</span>
+                        <div class="score-text">/ 10</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value">{{ "%.1f"|format(mark) }}</div>
-                <div class="stat-label">Score</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">{{ "%.0f"|format((mark/10)*100) }}%</div>
-                <div class="stat-label">Accuracy</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">
-                    {% if mark >= 8 %}
-                        A
-                    {% elif mark >= 6 %}
-                        B
-                    {% elif mark >= 4 %}
-                        C
-                    {% else %}
-                        D
-                    {% endif %}
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statScore">-</div>
+                    <div class="stat-label">Score</div>
                 </div>
-                <div class="stat-label">Grade</div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statAccuracy">-%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statGrade">-</div>
+                    <div class="stat-label">Grade</div>
+                </div>
             </div>
-        </div>
 
-        <div class="feedback-section">
-            <div class="feedback-title">💡 Feedback & Tips</div>
-            <div class="feedback-message">
-                {{ message }}
+            <div class="feedback-section">
+                <div class="feedback-title">💡 Feedback & Tips</div>
+                <div class="feedback-message" id="feedbackMessage">
+                    Loading analysis results...
+                </div>
             </div>
-        </div>
 
-        <div class="actions">
-            <a href="/upload" class="btn btn-primary">📹 Analyze Another Video</a>
-            <a href="/" class="btn btn-secondary">🏠 Back to Home</a>
+            <div class="actions">
+                <a href="/upload" class="btn btn-primary">📹 Analyze Another Video</a>
+                <a href="/" class="btn btn-secondary">🏠 Back to Home</a>
+            </div>
         </div>
     </div>
+
+    <script src="/static/results.js"></script>
 </body>
 </html>

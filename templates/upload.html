@@ -55,11 +55,12 @@
 <body>
 
     <h1>Incarca video pentru analiza</h1>
-    <form action="/analyze" method = "post" enctype="multipart/form-data">
+    <form id="uploadForm" action="/analyze" method = "post" enctype="multipart/form-data">
         <input type = "file" name = "video" accept=".mp4" required>
         <br>
         <button type="submit">Trimite Video</button>
     </form>
 
-    <a href="/">⟵ Înapoi la Home</a>
+
+    <script src="/static/upload.js"></script>
 </body>
