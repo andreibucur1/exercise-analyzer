@@ -10,7 +10,7 @@ VISIBILITY = 0.1
 class ExerciseAnalyzer():
     def __init__(self):
         self.detector = PostureDetector()
-    def analyzeVideo(self, video_path):
+    def analyzeVideo(self, video_path, exercise):
         cap = cv2.VideoCapture(video_path)
         l_angles=[]
         r_angles=[]
@@ -29,29 +29,12 @@ class ExerciseAnalyzer():
             cv2.imshow("Image", img)
             cv2.waitKey(1)
         
-        # mark, not_low_l, not_high_l, not_low_r, not_high_r = self.checkBicepCurl(l_angles, r_angles)
-        # if not not_low_l and not not_high_l and not not_low_r and not not_high_r:
-        #     message = "Good job."
-        # elif (not_low_l or not_low_r) and (not_high_l or not_high_r):
-        #     message = "You didn't curl fully. Also you need to extend the arm."
-        # elif not_high_l or not_high_r:
-        #     message = "You didn't curl fully."
-        # elif not_low_l or not_low_r:
-        #     message = "You need to extend the arm."
-        # else:
-        #     message = "No arm movement detected."
+        mark = 0
+        message = ""
 
-        # left_wrist_visibility = self.lmlist[15][3] 
-        # right_wrist_visibility = self.lmlist[16][3]
-
-        # if left_wrist_visibility < VISIBILITY:
-        #     message += "Left arm detection issue."
-
-        # if right_wrist_visibility < VISIBILITY:
-        #     message += "Right arm detection issue."
-        mark, low, high= self.checkBicepCurl(l_angles, r_angles)
-        return mark, "."
-
+        if exercise == "bicepCurl":
+            mark, message = self.checkBicepCurl(l_angles, r_angles)
+        return mark, message
 
     def findAngle(self, a, b, c):
         x1, y1 = a
@@ -93,8 +76,6 @@ class ExerciseAnalyzer():
         # # plt.plot(filtered_right_angles, label='Unghi Dreapta Prelucrat', alpha=0.7, color = 'red')
         # plt.show()
 
-        left_wrist_visibility = self.lmlist[13][3] 
-        right_wrist_visibility = self.lmlist[14][3]
 
         not_low_enough_l = 0
         not_high_enough_l = 0
@@ -102,11 +83,10 @@ class ExerciseAnalyzer():
         not_low_enough_r = 0
         not_high_enough_r = 0
 
-        mark_l = -1
-        mark_r = -1
+        mark_l = 0
+        mark_r = 0
 
-        print(left_wrist_visibility)
-        print(right_wrist_visibility)
+
 
         if len(min_left_id) <= len(max_left_id):
             rep_capture_error = 0
@@ -116,39 +96,46 @@ class ExerciseAnalyzer():
             index_number_l = len(max_left_id)
 
         for i in range(index_number_l):
-            if filtered_left_angles[max_left_id[i]] < 150:
+            if filtered_left_angles[max_left_id[i]] < 140:
                 not_low_enough_l += 1
             if filtered_left_angles[min_left_id[i + rep_capture_error]] > 70:
                 not_high_enough_l += 1
 
-        # number_of_reps_l = index_number_l - max(not_low_enough_l, not_high_enough_l)
         number_of_mistakes_l = not_high_enough_l + not_low_enough_l
         mark_l = 10 - 5 * number_of_mistakes_l / index_number_l
-        return mark_l, not_low_enough_l, not_high_enough_l
-        # if len(min_right_id) <= len(max_right_id):
-        #     rep_capture_error = 0
-        #     index_number_r = len(min_right_id)
-        # else:
-        #     rep_capture_error = 1
-        #     index_number_r = len(max_right_id)
 
-        # for i in range(index_number_r):
-        #     if filtered_right_angles[max_right_id[i]] < 150:
-        #         not_low_enough_r += 1
-        #     if filtered_right_angles[min_right_id[i + rep_capture_error]] > 70:
-        #         not_high_enough_r += 1
-        # number_of_mistakes_r = not_high_enough_r + not_low_enough_r
-        # mark_r = 10 - 5 * number_of_mistakes_r / index_number_r
 
-        # if right_wrist_visibility >= VISIBILITY and left_wrist_visibility < VISIBILITY:
-        #     return mark_r, 0, 0, not_low_enough_r, not_high_enough_r
-        # elif right_wrist_visibility < VISIBILITY and left_wrist_visibility >= VISIBILITY:
-        #     return mark_r, not_low_enough_l, not_high_enough_l, 0, 0
-        # elif right_wrist_visibility < VISIBILITY and left_wrist_visibility < VISIBILITY:
-        #     return 0,0,0,0,0
-        # else:
-        #     mark = (mark_r+mark_l)/2
-            # return mark, not_low_enough_l, not_high_enough_l, not_low_enough_r, not_high_enough_r
+
+
+
+        if len(min_right_id) <= len(max_right_id):
+            rep_capture_error = 0
+            index_number_r = len(min_right_id)
+        else:
+            rep_capture_error = 1
+            index_number_r = len(max_right_id)
+
+        for i in range(index_number_r):
+            if filtered_right_angles[max_right_id[i]] < 140:
+                not_low_enough_r += 1
+            if filtered_right_angles[min_right_id[i + rep_capture_error]] > 70:
+                not_high_enough_r += 1
+        number_of_mistakes_r = not_high_enough_r + not_low_enough_r
+        mark_r = 10 - 5 * number_of_mistakes_r / index_number_r
+
+
+        mark = (mark_r+mark_l)/2
+        
+        if not_low_enough_l == 0 and not_high_enough_l == 0 and not_low_enough_r == 0 and not_high_enough_r == 0:
+            message = "Perfect form!"
+        elif (not_low_enough_l != 0 or not_low_enough_r != 0) and (not_high_enough_l != 0 and not_high_enough_r != 0):
+            message = "You need to work on your form, try to lower your arms more and raise them higher."
+        elif not_low_enough_l != 0 or not_low_enough_r != 0:
+            message = "You need to work on your form, try to lower your arms more." 
+        else:
+            message = "You need tro work on your form, try to raise your arms higher."   
+        
+        return mark, message
 
         
 

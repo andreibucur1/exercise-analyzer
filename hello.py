@@ -22,7 +22,11 @@ def analyze():
         return jsonify(success=False, message="No video file provided"), 400
     
     video = request.files['video']
+    # trebuie sa salvez video-ul in upload folder si dupa sa-l sterg
+
     
+
+
     if video.filename == '':
         return jsonify(success=False, message="Empty file name"), 400
     
@@ -31,8 +35,10 @@ def analyze():
         path = os.path.join(app.config['UPLOAD_FOLDER'], video.filename)
         video.save(path)
         
+        exercise = request.form.get('exercise')
+
         try:
-            mark, message = analyzer.analyzeVideo(path)
+            mark, message = analyzer.analyzeVideo(path, exercise)
             return jsonify(success = True, mark=mark, message=message)
             
         except Exception as e:

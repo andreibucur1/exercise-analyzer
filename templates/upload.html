@@ -54,11 +54,17 @@
 </head>
 <body>
 
-    <h1>Incarca video pentru analiza</h1>
+    <h1>Upload your video for analysis</h1>
     <form id="uploadForm" action="/analyze" method = "post" enctype="multipart/form-data">
-        <input type = "file" name = "video" accept=".mp4" required>
-        <br>
-        <button type="submit">Trimite Video</button>
+        <input type = "file" name = "video" accept=".mp4" required><br>
+        <p>Select the exercise you want to analyze:</p>
+        <input type = "radio" id="bicepBtn" name="exercise" value="bicepCurl">
+        <label for="bicepBtn">Biceps Curl</label><br>
+        <input type = "radio" id="tricepBtn" name="exercise" value="tricepExtension">
+        <label for="tricepBtn">Triceps Extension</label><br>
+        <input type = "radio" id="shoulderBtn" name="exercise" value="lateralRaise">
+        <label for="shoulderBtn">Lateral Raise</label><br>
+        <button type="submit">Send Video</button>
     </form>
 
 

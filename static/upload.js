@@ -1,4 +1,7 @@
 const form  = document.getElementById('uploadForm')
+const bicepBtn = document.getElementById('bicepBtn');
+const tricepsBtn = document.getElementById('tricepsBtn');
+const shoulderBtn = document.getElementById('shoulderBtn');
 
 form.addEventListener('submit', function(event) {
     event.preventDefault(); 
