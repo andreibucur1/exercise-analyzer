@@ -12,25 +12,167 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at 20% 80%, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        }
+
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 8s ease-in-out infinite;
+            filter: blur(1px);
+        }
+
+        .bg-orb:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-orb:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #4834d4, #686de0);
+            top: 60%;
+            right: 15%;
+            animation-delay: 3s;
+        }
+
+        .bg-orb:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #00d2d3, #54a0ff);
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) scale(1) rotate(0deg);
+                opacity: 0.1;
+            }
+            50% { 
+                transform: translateY(-30px) scale(1.1) rotate(180deg);
+                opacity: 0.15;
+            }
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .logo .highlight {
+            background: linear-gradient(45deg, #ff6b6b, #4834d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #cccccc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b6b, #4834d4);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        main {
+            padding-top: 120px;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.07);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             padding: 40px;
             max-width: 600px;
             width: 100%;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
         }
 
         .results-header {
@@ -38,14 +180,14 @@
         }
 
         .results-header h1 {
-            color: #2c3e50;
+            color: #fff;
             font-size: 2.5em;
             margin-bottom: 10px;
             font-weight: 700;
         }
 
         .results-header p {
-            color: #7f8c8d;
+            color: #a0a0a0;
             font-size: 1.1em;
         }
 
@@ -90,7 +232,7 @@
         }
 
         .feedback-section {
-            background: #f8f9fa;
+            background: rgba(255,255,255,0.1);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
@@ -98,17 +240,17 @@
         }
 
         .feedback-title {
-            color: #2c3e50;
+            color: #fff;
             font-size: 1.3em;
             margin-bottom: 15px;
             font-weight: 600;
         }
 
         .feedback-message {
-            color: #34495e;
+            color: #fff;
             font-size: 1.1em;
             line-height: 1.6;
-            background: white;
+            background: rgba(255,255,255,0.07);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -146,14 +288,17 @@
         }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
-            color: white;
-            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.1);
+            transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
         }
 
         .stats-grid {
@@ -164,7 +309,7 @@
         }
 
         .stat-card {
-            background: white;
+            background: rgba(255,255,255,0.07);
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -174,12 +319,12 @@
         .stat-value {
             font-size: 2em;
             font-weight: bold;
-            color: #2c3e50;
+            color: #fff;
             margin-bottom: 5px;
         }
 
         .stat-label {
-            color: #7f8c8d;
+            color: #a0a0a0;
             font-size: 0.9em;
         }
 
@@ -207,7 +352,7 @@
         }
 
         .loading-text {
-            color: #7f8c8d;
+            color: #a0a0a0;
             font-size: 1.1em;
         }
 
@@ -235,60 +380,79 @@
                 flex-direction: column;
                 align-items: center;
             }
+            main {
+                padding-top: 80px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Processing your exercise analysis...</div>
+    <div class="bg-wrapper"></div>
+    <div class="bg-elements">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">Coach<span class="highlight">Form</span></a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
         </div>
-
-        <div class="results-content" id="results">
-            <div class="results-header">
-                <h1>🏋️ Exercise Analysis</h1>
-                <p>Your workout performance results</p>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Processing your exercise analysis...</div>
             </div>
 
-            <div class="score-section">
-                <div class="score-circle" id="scoreCircle">
-                    <div>
-                        <span id="scoreValue">-</span>
-                        <div class="score-text">/ 10</div>
+            <div class="results-content" id="results">
+                <div class="results-header">
+                    <h1>🏋️ Exercise Analysis</h1>
+                    <p>Your workout performance results</p>
+                </div>
+
+                <div class="score-section">
+                    <div class="score-circle" id="scoreCircle">
+                        <div>
+                            <span id="scoreValue">-</span>
+                            <div class="score-text">/ 10</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="statScore">-</div>
-                    <div class="stat-label">Score</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statScore">-</div>
+                        <div class="stat-label">Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statAccuracy">-%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statGrade">-</div>
+                        <div class="stat-label">Grade</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statAccuracy">-%</div>
-                    <div class="stat-label">Accuracy</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statGrade">-</div>
-                    <div class="stat-label">Grade</div>
-                </div>
-            </div>
 
-            <div class="feedback-section">
-                <div class="feedback-title">💡 Feedback & Tips</div>
-                <div class="feedback-message" id="feedbackMessage">
-                    Loading analysis results...
+                <div class="feedback-section">
+                    <div class="feedback-title">💡 Feedback & Tips</div>
+                    <div class="feedback-message" id="feedbackMessage">
+                        Loading analysis results...
+                    </div>
                 </div>
-            </div>
 
-            <div class="actions">
-                <a href="/upload" class="btn btn-primary">📹 Analyze Another Video</a>
-                <a href="/" class="btn btn-secondary">🏠 Back to Home</a>
+                <div class="actions">
+                    <a href="/upload" class="btn btn-primary">📹 Analyze Another Video</a>
+                    <a href="/" class="btn btn-secondary">🏠 Back to Home</a>
+                </div>
             </div>
         </div>
-    </div>
-
+    </main>
     <script src="/static/results.js"></script>
 </body>
-</html>

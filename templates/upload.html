@@ -1,72 +1,337 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-
-
-
     <meta charset="UTF-8">
-    <title>Incarca Video</title>
+    <title>Upload Video - CoachForm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 50px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        h1 {
-            color: #3f51b5;
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at 20% 80%, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        }
+
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 8s ease-in-out infinite;
+            filter: blur(1px);
+        }
+
+        .bg-orb:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-orb:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #4834d4, #686de0);
+            top: 60%;
+            right: 15%;
+            animation-delay: 3s;
+        }
+
+        .bg-orb:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #00d2d3, #54a0ff);
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) scale(1) rotate(0deg);
+                opacity: 0.1;
+            }
+            50% { 
+                transform: translateY(-30px) scale(1.1) rotate(180deg);
+                opacity: 0.15;
+            }
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .logo .highlight {
+            background: linear-gradient(45deg, #ff6b6b, #4834d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #cccccc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b6b, #4834d4);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        main {
+            padding-top: 120px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-container {
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-title {
+            color: #fff;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-desc {
+            color: #a0a0a0;
+            font-size: 1.1em;
+            margin-bottom: 30px;
         }
 
         form {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        label {
+            font-size: 1em;
+            color: #cccccc;
+            margin-bottom: 8px;
+            display: block;
         }
 
         input[type="file"] {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px;
+        }
+
+        .exercise-group {
+            margin-bottom: 25px;
+        }
+
+        .exercise-group label {
+            display: inline-block;
+            margin-right: 15px;
+            font-size: 1em;
+            color: #fff;
+        }
+
+        .radio-btn {
+            accent-color: #ff6b6b;
+            margin-right: 6px;
         }
 
         button {
-            background-color: #3f51b5;
+            background: linear-gradient(45deg, #ff6b6b, #4834d4);
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 6px;
+            padding: 12px 32px;
+            font-size: 1.1em;
+            border-radius: 25px;
             cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
         button:hover {
-            background-color: #303f9f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(45deg, #4834d4, #ff6b6b);
         }
 
-        a {
-            margin-top: 20px;
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: inline-block;
-            color: #3f51b5;
+            min-width: 140px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .upload-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            .header-title {
+                font-size: 1.5em;
+            }
+            main {
+                padding-top: 80px;
+            }
         }
     </style>
-
 </head>
 <body>
+    <div class="bg-wrapper"></div>
+    <div class="bg-elements">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">Coach<span class="highlight">Form</span></a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="upload-container">
+            <div class="header-title">🎬 Upload Your Exercise Video</div>
+            <div class="header-desc">
+                Select your workout video and exercise type for instant AI analysis and feedback.
+            </div>
+            <form id="uploadForm" action="/analyze" method="post" enctype="multipart/form-data">
+                <label for="video">Video file (.mp4):</label>
+                <input type="file" name="video" id="video" accept=".mp4" required>
 
-    <h1>Upload your video for analysis</h1>
-    <form id="uploadForm" action="/analyze" method = "post" enctype="multipart/form-data">
-        <input type = "file" name = "video" accept=".mp4" required><br>
-        <p>Select the exercise you want to analyze:</p>
-        <input type = "radio" id="bicepBtn" name="exercise" value="bicepCurl">
-        <label for="bicepBtn">Biceps Curl</label><br>
-        <input type = "radio" id="tricepBtn" name="exercise" value="tricepExtension">
-        <label for="tricepBtn">Triceps Extension</label><br>
-        <input type = "radio" id="shoulderBtn" name="exercise" value="lateralRaise">
-        <label for="shoulderBtn">Lateral Raise</label><br>
-        <button type="submit">Send Video</button>
-    </form>
+                <div class="exercise-group">
+                    <label>Select the exercise:</label>
+                    <input class="radio-btn" type="radio" id="bicepBtn" name="exercise" value="bicepCurl" required>
+                    <label for="bicepBtn">Biceps Curl</label>
+                    <input class="radio-btn" type="radio" id="tricepBtn" name="exercise" value="tricepExtension">
+                    <label for="tricepBtn">Triceps Extension</label>
+                    <input class="radio-btn" type="radio" id="shoulderBtn" name="exercise" value="lateralRaise">
+                    <label for="shoulderBtn">Lateral Raise</label>
+                </div>
 
-
+                <button type="submit">📤 Send Video</button>
+            </form>
+            <div class="actions">
+                <a href="/" class="btn-secondary">🏠 Back to Home</a>
+            </div>
+        </div>
+    </main>
     <script src="/static/upload.js"></script>
-</body>

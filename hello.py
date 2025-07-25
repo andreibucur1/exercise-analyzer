@@ -2,11 +2,54 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import cv2
 import os
 from AnalyzerClass import ExerciseAnalyzer
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, String, Float
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = r'C:\Users\Andrei\OneDrive - Colegiul Național de Informatică Piatra-Neamț\Desktop\Exercise Project'
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///USERS.db"
+
 
 analyzer = ExerciseAnalyzer()
+
+class Base(DeclarativeBase):
+  pass
+
+db = SQLAlchemy(model_class=Base)
+db.init_app(app)
+
+
+class User(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str]
+
+
+
+
+with app.app_context():
+    db.create_all()
+
+
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        email = request.form.get("email")
+        
+        if not username or not email:
+            return render_template("login.html", error="Please fill in all fields.")
+        
+        user = User(username=username, email=email)
+        db.session.add(user)
+        db.session.commit()
+        
+        return redirect(url_for("home"))
+    
+    return render_template("login.html")
 
 @app.route("/")
 def home():
