@@ -5,10 +5,12 @@ from AnalyzerClass import ExerciseAnalyzer
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float
+from hashlib import sha256
+import random
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = r'C:\Users\Andrei\OneDrive - Colegiul Național de Informatică Piatra-Neamț\Desktop\Exercise Project'
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///USERS.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users111.db"
 
 
 analyzer = ExerciseAnalyzer()
@@ -24,6 +26,7 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True)
     email: Mapped[str]
+    password: Mapped[str]
 
 
 
@@ -34,26 +37,63 @@ with app.app_context():
 
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        email = request.form.get("email")
-        
-        if not username or not email:
-            return render_template("login.html", error="Please fill in all fields.")
-        
-        user = User(username=username, email=email)
-        db.session.add(user)
-        db.session.commit()
-        
-        return redirect(url_for("home"))
-    
-    return render_template("login.html")
+
 
 @app.route("/")
 def home():
     return render_template("index.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        
+        
+    return render_template("login.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm-password")
+
+        if not username or not email or not password or not confirm_password:
+            return jsonify(success=False, error="All fields are required")
+
+
+        if password != confirm_password:
+            return jsonify(success=False, error="Passwords do not match")
+        
+        if len(password) < 6:
+            return jsonify(success=False, error="Password must be at least 6 characters long")
+        
+        existing_user = db.session.execute(db.select(User).where(User.username == username)).scalar()
+
+        if existing_user:
+            return jsonify(success=False, error="Username already exists")
+        
+        try:
+            user_id = random.randint(100000, 999999)
+            while db.session.execute(db.select(User).where(User.id == user_id)).scalar():
+                user_id = random.randint(100000, 999999)
+
+
+            user = User(id=user_id, username=username, email=email, password=sha256(password.encode()).hexdigest())
+            db.session.add(user)
+            db.session.commit()
+            return jsonify(success=True, message="User registered successfully")
+        except Exception as e:
+            db.session.rollback()
+            return jsonify(success=False, error=f"Error registering user: {str(e)}")
+
+
+    return render_template("register.html")
+
 
 @app.route("/upload")
 def upload():
