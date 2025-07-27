@@ -4,7 +4,7 @@ const password = document.getElementById('password');
 
 
 
-form.addEventListener('submit', function(event) {
+loginForm.addEventListener('submit', function(event) {
     event.preventDefault(); 
 
     const formData = new FormData(loginForm);
@@ -16,7 +16,6 @@ form.addEventListener('submit', function(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            sessionStorage.setItem('username', data.username);
             window.location.href = '/';
         } else {
             alert('Login failed: ' + data.error);

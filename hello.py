@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 import cv2
 import os
 from AnalyzerClass import ExerciseAnalyzer
@@ -9,9 +9,9 @@ from hashlib import sha256
 import random
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = r'C:\Users\Andrei\OneDrive - Colegiul Național de Informatică Piatra-Neamț\Desktop\Exercise Project'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users111.db"
-
+app.secret_key = 'secret'
 
 analyzer = ExerciseAnalyzer()
 
@@ -49,6 +49,18 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        
+        existing_user = db.session.execute(db.select(User).where(User.username == username)).scalar()
+
+        if not existing_user:
+            return jsonify(success=False, error="User not found")
+
+        if existing_user.password != sha256(password.encode()).hexdigest():
+            return jsonify(success=False, error="Incorrect password")
+        
+        print("^^^^^^^^^^^^^^^lala")
+        session['user'] = existing_user.username
+        return jsonify(success=True, message="Login successful")
         
         
     return render_template("login.html")
@@ -94,6 +106,10 @@ def register():
 
     return render_template("register.html")
 
+@app.route("/logout")
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('home'))
 
 @app.route("/upload")
 def upload():
@@ -119,13 +135,19 @@ def analyze():
         video.save(path)
         
         exercise = request.form.get('exercise')
-
+        cap = cv2.VideoCapture(path)
         try:
             mark, message = analyzer.analyzeVideo(path, exercise)
             return jsonify(success = True, mark=mark, message=message)
             
         except Exception as e:
             return jsonify(success=False, error=f"Error analyzing video: {str(e)}")
+        
+        finally:
+            cap.release()
+            cv2.destroyAllWindows()
+            if os.path.exists(path):
+                os.remove(path)
     
     return jsonify(success=False, error="Unknown error")
 

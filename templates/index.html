@@ -488,8 +488,13 @@
             
             <div class="nav-links">
                 <div class="auth-buttons">
-                    <a href="/login" class="btn-auth btn-login" onclick="showLogin()">Login</a>
-                    <a href="/register" class="btn-auth btn-register" onclick="showRegister()">Sign Up</a>
+                    {% if not session.get('user') %}
+                    <a href="/login" class="btn-auth btn-login" >Login</a>
+                    <a href="/register" class="btn-auth btn-register" >Sign Up</a>
+                    {% else: %}
+                    <a href="/logout" class="btn-auth btn-login" >Logout</a>
+                    <a href="/profile" class="btn-auth btn-register" >Profile</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -510,7 +515,9 @@
             </p>
             
             <div class="hero-cta">
+                {% if session.get('user') %}
                 <a href="/upload" class="btn-primary">🎬 Start Free Analysis</a>
+                {% endif %}
                 <a href="#features" class="btn-secondary">🔍 Learn More</a>
             </div>
             
