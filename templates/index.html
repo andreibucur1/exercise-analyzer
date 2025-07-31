@@ -488,7 +488,7 @@
             
             <div class="nav-links">
                 <div class="auth-buttons">
-                    {% if not session.get('user') %}
+                    {% if not current_user.is_authenticated %}
                     <a href="/login" class="btn-auth btn-login" >Login</a>
                     <a href="/register" class="btn-auth btn-register" >Sign Up</a>
                     {% else: %}
@@ -515,7 +515,7 @@
             </p>
             
             <div class="hero-cta">
-                {% if session.get('user') %}
+                {% if current_user.is_authenticated %}
                 <a href="/upload" class="btn-primary">🎬 Start Free Analysis</a>
                 {% endif %}
                 <a href="#features" class="btn-secondary">🔍 Learn More</a>
