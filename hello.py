@@ -15,6 +15,12 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users111.db"
 app.secret_key = 'secret'
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get_or_404(User, user_id)
+
 analyzer = ExerciseAnalyzer()
 
 class Base(DeclarativeBase):
@@ -24,13 +30,9 @@ db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
 
-login_manager = LoginManager()
-login_manager.init_app(app)
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return db.get_or_404(User, user_id)
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -183,6 +185,25 @@ def analyze():
 @login_required
 def results():
     return render_template("results.html")
+
+
+@app.route("/api/exercise-data", methods=["GET", "POST"])
+@login_required
+def get_results():
+    user_data = db.session.execute(db.select(ExerciseData).where(ExerciseData.user_id == current_user.id)).scalars().all()
+    results = []
+    for data in user_data:
+        results.append({
+            'exercise': data.exercise,
+            'mark': data.mark,
+            'timestamp': data.timestamp
+        })
+    return jsonify(results=results)
+
+@app.route("/chart", methods=["GET"])
+@login_required
+def chart():
+    return render_template("chart.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
