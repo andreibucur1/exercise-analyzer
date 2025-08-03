@@ -15,6 +15,8 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users111.db"
 app.secret_key = 'secret'
 
+
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 @login_manager.user_loader
@@ -81,7 +83,7 @@ def login():
         
         print("^^^^^^^^^^^^^^^lala")
         login_user(existing_user)
-        return jsonify(success=True, message="Login successful")
+        return jsonify(success=True, message="Login successful", name = username)
         
         
     return render_template("login.html")
@@ -122,7 +124,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            return jsonify(success=True, message="User registered successfully")
+            return jsonify(success=True, message="User registered successfully", name=username)
         except Exception as e:
             db.session.rollback()
             return jsonify(success=False, error=f"Error registering user: {str(e)}")

@@ -5,7 +5,6 @@ const emailInput = document.getElementById('email');
 const registerForm = document.getElementById('registerForm');
 
 
-
 registerForm.addEventListener('submit', function(event) {
     event.preventDefault(); 
 
@@ -18,6 +17,7 @@ registerForm.addEventListener('submit', function(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            localStorage.setItem('registerUsername', data.name);
             window.location.href = '/';
         } else {
             alert('Registration failed: ' + data.error);

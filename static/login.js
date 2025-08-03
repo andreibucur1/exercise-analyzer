@@ -3,7 +3,6 @@ const username = document.getElementById('username');
 const password = document.getElementById('password');
 
 
-
 loginForm.addEventListener('submit', function(event) {
     event.preventDefault(); 
 
@@ -16,6 +15,7 @@ loginForm.addEventListener('submit', function(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            localStorage.setItem('loginUsername', data.name);
             window.location.href = '/';
         } else {
             alert('Login failed: ' + data.error);
@@ -26,3 +26,4 @@ loginForm.addEventListener('submit', function(event) {
         alert('An error occurred while logging in.');
     });
 });
+
