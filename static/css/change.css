@@ -1,0 +1,241 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Staatliches', 'Russo One', system-ui, sans-serif;
+    background: #2E2E2E;
+    color: #FFFFFF;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Fundal gym-themed */
+.bg-wrapper {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -2;
+    background: 
+        linear-gradient(rgba(46, 46, 46, 0.9), rgba(46, 46, 46, 0.95)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.03'%3E%3Cpolygon fill='%23A4DE02' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E") center/200px,
+        radial-gradient(circle at 20% 80%, #1a1a1a 0%, #2E2E2E 50%, #0f0f0f 100%);
+}
+
+.bg-elements {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.05;
+    animation: float 8s ease-in-out infinite;
+    filter: blur(2px);
+}
+
+.bg-orb:nth-child(1) {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(45deg, #A4DE02, #8ABE02);
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.bg-orb:nth-child(2) {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(45deg, #A4DE02, #76A902);
+    top: 60%;
+    right: 15%;
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-20px) scale(1.05);
+    }
+}
+
+/* Centrare formular */
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Container formular */
+.login-container {
+    background: rgba(46, 46, 46, 0.9);
+    border: 2px solid rgba(164, 222, 2, 0.3);
+    border-radius: 0;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    padding: 50px 40px;
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Linie decorativă sus */
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(164, 222, 2, 0.8), transparent);
+}
+
+/* Header formular */
+.login-header {
+    margin-bottom: 40px;
+}
+
+.login-header h1 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2.5em;
+    font-weight: 400;
+    margin-bottom: 15px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #A4DE02, #FFFFFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.login-header p {
+    font-family: 'Staatliches', sans-serif;
+    color: #7D7D7D;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Grupe formular */
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+/* Label-uri */
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #FFFFFF;
+    font-family: 'Russo One', sans-serif;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Input-uri */
+input {
+    width: 100%;
+    padding: 18px 20px;
+    background: rgba(46, 46, 46, 0.8);
+    border: 2px solid rgba(164, 222, 2, 0.2);
+    border-radius: 0;
+    color: #FFFFFF;
+    font-size: 1em;
+    font-family: 'Staatliches', sans-serif;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+input:focus {
+    outline: none;
+    border-color: #A4DE02;
+    background: rgba(46, 46, 46, 0.9);
+    box-shadow: 0 0 20px rgba(164, 222, 2, 0.3);
+    transform: translateY(-2px);
+}
+
+input::placeholder {
+    color: #7D7D7D;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Buton */
+button {
+    background: linear-gradient(135deg, #A4DE02, #8ABE02);
+    color: #2E2E2E;
+    border: none;
+    padding: 20px 40px;
+    font-size: 1.1em;
+    border-radius: 0;
+    cursor: pointer;
+    font-family: 'Russo One', sans-serif;
+    font-weight: 400;
+    width: 100%;
+    margin-top: 25px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(164, 222, 2, 0.3);
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 45px rgba(164, 222, 2, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 30px 25px;
+        margin: 0 15px;
+    }
+    .login-header h1 {
+        font-size: 2em;
+    }
+    input {
+        padding: 15px 18px;
+    }
+    button {
+        padding: 18px 35px;
+    }
+}
+
+/* Selectie */
+::selection {
+    background: rgba(164, 222, 2, 0.3);
+    color: #2E2E2E;
+}
+
+/* Scroll lin */
+html {
+    scroll-behavior: smooth;
+}

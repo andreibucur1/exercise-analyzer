@@ -9,11 +9,16 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("usernameContent").innerText = username;
 });
 
-function toggleDropdown() {
-    document.getElementById("dropdownMenu").classList.toggle("show");
+  function toggleDropdown() {
+    const menu = document.getElementById("dropdownMenu");
+    menu.classList.toggle("show");
   }
 
-  // Închide dropdown-ul dacă se face click în afara lui
+  function toggleEditSubmenu() {
+    const submenu = document.getElementById("editSubmenu");
+    submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+  }
+
   window.onclick = function(e) {
     if (!e.target.matches('.dropdown-btn')) {
       const dropdowns = document.getElementsByClassName("dropdown-content");

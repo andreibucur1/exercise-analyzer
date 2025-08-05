@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - CoachForm</title>
-    <link rel="stylesheet" href="/static/css/login.css">
+    <title>Change Username - CoachForm</title>
+    <link rel="stylesheet" href="/static/css/change.css">
 </head>
 <body>
     <div class="bg-wrapper"></div>
@@ -14,15 +14,15 @@
     </div>
     
     <main>
-        <div class="login-container">
-            <div class="login-header">
-                <h1>Welcome Back! 👋</h1>
-                <p>Enter your credentials to continue</p>
+        <div class="container">
+            <div class="header">
+                <h1>Change Your Username</h1>
+                <p>Enter your new username to update your profile</p>
             </div>
             
-            <form id="loginForm" action="/login" method="post">
+            <form id="Form" action="/change-username" method="post">
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">New Username</label>
                     <input type="text" id="username" name="username" required>
                 </div>
                 
@@ -31,14 +31,11 @@
                     <input type="password" id="password" name="password" required>
                 </div>
                 
-                <button type="submit">Login</button>
+                <button type="submit">Change</button>
             </form>
             
-            <div class="alt-action">
-                Don't have an account?<a href="/register">Register</a>
-            </div>
         </div>
     </main>
-    <script src="/static/js/login.js"></script>
+    <script src="/static/js/change-username.js"></script>
 </body>
 </html>

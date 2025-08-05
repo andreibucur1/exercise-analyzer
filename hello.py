@@ -137,6 +137,33 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+@app.route("/change-username", methods=["GET", "POST"])
+@login_required
+def change_username():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        
+        existing_user = db.session.execute(db.select(User).where(User.username == username)).scalar()
+
+        if existing_user:
+            return jsonify(success=False, error="Username already exists")
+
+        if not check_password_hash(existing_user.password, password):
+            return jsonify(success=False, error="Incorrect password")
+        
+        print("^^^^^^^^^^^^^^^lala")
+        login_user(existing_user)
+        return jsonify(success=True, message="Login successful", name = username)
+        
+    return render_template("change-username.html")
+
+
+@app.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    return render_template("change-password.html")
+
 @app.route("/upload")
 @login_required
 def upload():
