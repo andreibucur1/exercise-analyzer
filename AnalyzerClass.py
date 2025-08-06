@@ -134,7 +134,7 @@ class ExerciseAnalyzer():
                 },
             ],
             temperature=0.4,
-            max_tokens=4096,
+            max_tokens=150,
             top_p=1
         )
         print(response.choices[0].message.content)
@@ -143,165 +143,140 @@ class ExerciseAnalyzer():
         return mark, message
 
     def checkTricepExtension(self, left_arm_angles, right_arm_angles):
-        
-    
-        
-        filtered_left_angles = savgol_filter(left_arm_angles, window_length=20, polyorder=2, mode= "nearest")
-        filtered_right_angles = savgol_filter(right_arm_angles, window_length=20, polyorder=2,  mode= "nearest")
+        mistakes_left = 0
+        mistakes_right = 0
+        max_left = []
+        min_left = []
+        max_right = []
+        min_right = []
+        if len(left_arm_angles) > 20:
+            filtered_left = savgol_filter(left_arm_angles, window_length=20, polyorder=2, mode="nearest")
+            max_left = np.round(filtered_left[find_peaks(filtered_left)[0]], 0)
+            min_left = np.round(filtered_left[find_peaks(-filtered_left)[0]], 0)
+            for angle in max_left:
+                if angle < 165:  # pragul pentru extensia triceps
+                    mistakes_left += 1
+            for angle in min_left:
+                if angle > 90:
+                    mistakes_left += 1
 
-        max_left_id = find_peaks(filtered_left_angles)[0]
-        max_right_id = find_peaks(filtered_right_angles)[0]
+        if len(right_arm_angles) > 20:
+            filtered_right = savgol_filter(right_arm_angles, window_length=20, polyorder=2, mode="nearest")
+            max_right = np.round(filtered_right[find_peaks(filtered_right)[0]], 0)
+            min_right = np.round(filtered_right[find_peaks(-filtered_right)[0]], 0)
+            for angle in max_right:
+                if angle < 165:
+                    mistakes_right += 1
+            for angle in min_right:
+                if angle > 90:
+                    mistakes_right += 1
 
-        min_left_id = find_peaks(-filtered_left_angles)[0]
-        min_right_id = find_peaks(-filtered_right_angles)[0]
-
-
-        # plt.figure(figsize=(12, 6))
-        # plt.plot(left_arm_angles, label='Unghi Dreapta Brut', alpha=0.7, color = 'blue')
-        # plt.plot(filtered_left_angles, label='Unghi Dreapta Prelucrat', alpha=0.7, color = 'red')
-        # # plt.plot(right_arm_angles, label='Unghi Dreapta Brut', alpha=0.7, color = 'blue')
-        # # plt.plot(filtered_right_angles, label='Unghi Dreapta Prelucrat', alpha=0.7, color = 'red')
-        # plt.show()
-
-
-        not_low_enough_l = 0
-        not_high_enough_l = 0
-
-        not_low_enough_r = 0
-        not_high_enough_r = 0
-
-        mark_l = 0
-        mark_r = 0
-
-
-
-        if len(min_left_id) < len(max_left_id):
-            rep_capture_error = 1
-            index_number_l = len(min_left_id)
+        # Calculează punctajul
+        if max_left.size and max_right.size:
+            mark = 10 - 5 * (mistakes_left + mistakes_right) / min(len(min_left), len(min_right))
+        elif max_left.size:
+            mark = 10 - 5 * mistakes_left / len(min_left)
+        elif max_right.size:
+            mark = 10 - 5 * mistakes_right / len(min_right)
         else:
-            rep_capture_error = 0
-            index_number_l = len(max_left_id)
+            mark = 0
 
-        for i in range(index_number_l):
-            if filtered_left_angles[max_left_id[i + rep_capture_error]] < 165:
-                not_low_enough_l += 1
-            if filtered_left_angles[min_left_id[i]] > 90:
-                not_high_enough_l += 1
+        # Trimite la GPT un mesaj clar
+        response = self.client.chat.completions.create(
+            model="openai/gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert analyzing tricep extension exercise based on angles and marks. "
+                            "Generate a clear, concise feedback message."
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Tricep extension analysis: left min angles {min_left}, left max angles {max_left}, "
+                        f"right min angles {min_right}, right max angles {max_right}, "
+                        f"mark: {mark}, mistakes left: {mistakes_left}, mistakes right: {mistakes_right}."
+                    )
+                }
+            ],
+            temperature=0.4,
+            max_tokens=150,
+            top_p=1
+        )
+        message = response.choices[0].message.content
+        print(message)
+        print(f"Mark: {mark}")
 
-        number_of_mistakes_l = not_high_enough_l + not_low_enough_l
-        mark_l = 10 - 5 * number_of_mistakes_l / index_number_l
-
-
-
-
-
-        if len(min_right_id) < len(max_right_id):
-            rep_capture_error = 1
-            index_number_r = len(min_right_id)
-        else:
-            rep_capture_error = 0
-            index_number_r = len(max_right_id)
-
-        for i in range(index_number_r):
-            if filtered_right_angles[max_right_id[i + rep_capture_error]] < 165:
-                not_low_enough_r += 1
-            if filtered_right_angles[min_right_id[i ]] > 70:
-                not_high_enough_r += 1
-        number_of_mistakes_r = not_high_enough_r + not_low_enough_r
-        mark_r = 10 - 5 * number_of_mistakes_r / index_number_r
-
-
-        mark = (mark_r+mark_l)/2
-        
-        if not_low_enough_l == 0 and not_high_enough_l == 0 and not_low_enough_r == 0 and not_high_enough_r == 0:
-            message = "Perfect form!"
-        elif (not_low_enough_l != 0 or not_low_enough_r != 0) and (not_high_enough_l != 0 and not_high_enough_r != 0):
-            message = "You need to work on your form, try to lower your arms more and raise them higher."
-        elif not_low_enough_l != 0 or not_low_enough_r != 0:
-            message = "You need to work on your form, try to lower your arms more." 
-        else:
-            message = "You need tro work on your form, try to raise your arms higher."   
-        
         return mark, message
     
     def checkLateralRaises(self, left_shoulder_angles, right_shoulder_angles):
-        filtered_left_angles = savgol_filter(left_shoulder_angles, window_length=20, polyorder=2, mode= "nearest")
-        filtered_right_angles = savgol_filter(right_shoulder_angles, window_length=20, polyorder=2,  mode= "nearest")
+        mistakes_left = 0
+        mistakes_right = 0
+        max_left = []
+        min_left = []
+        max_right = []
+        min_right = []
 
-        max_left_id = find_peaks(filtered_left_angles)[0]
-        max_right_id = find_peaks(filtered_right_angles)[0]
-
-        min_left_id = find_peaks(-filtered_left_angles)[0]
-        min_right_id = find_peaks(-filtered_right_angles)[0]
-
-
-        # plt.figure(figsize=(12, 6))
-        # plt.plot(left_shoulder_angles, label='Unghi Dreapta Brut', alpha=0.7, color = 'blue')
-        # plt.plot(filtered_left_angles, label='Unghi Dreapta Prelucrat', alpha=0.7, color = 'red')
-        # # plt.plot(right_arm_angles, label='Unghi Dreapta Brut', alpha=0.7, color = 'blue')
-        # # plt.plot(filtered_right_angles, label='Unghi Dreapta Prelucrat', alpha=0.7, color = 'red')
-        # plt.show()
-
-
-        not_low_enough_l = 0
-        not_high_enough_l = 0
-
-        not_low_enough_r = 0
-        not_high_enough_r = 0
-
-        mark_l = 0
-        mark_r = 0
+        if len(left_shoulder_angles) > 20:
+            filtered_left = savgol_filter(left_shoulder_angles, window_length=20, polyorder=2, mode="nearest")
+            max_left = np.round(filtered_left[find_peaks(filtered_left)[0]], 0)
+            min_left = np.round(filtered_left[find_peaks(-filtered_left)[0]], 0)
+            for angle in max_left:
+                if angle < 80:  # prag pentru lateral raise
+                    mistakes_left += 1
+            for angle in min_left:
+                if angle > 30:
+                    mistakes_left += 1
 
 
+        if len(right_shoulder_angles) > 20:
+            filtered_right = savgol_filter(right_shoulder_angles, window_length=20, polyorder=2, mode="nearest")
+            max_right = np.round(filtered_right[find_peaks(filtered_right)[0]], 0)
+            min_right = np.round(filtered_right[find_peaks(-filtered_right)[0]], 0)
+            for angle in max_right:
+                if angle < 80:
+                    mistakes_right += 1
+            for angle in min_right:
+                if angle > 30:
+                    mistakes_right += 1
 
-        if len(min_left_id) < len(max_left_id):
-            rep_capture_error = 1
-            index_number_l = len(min_left_id)
+
+        # Calculează punctajul
+        if max_left.size and max_right.size:
+            mark = 10 - 5 * (mistakes_left + mistakes_right) / min(len(min_left), len(min_right))
+        elif max_left.size:
+            mark = 10 - 5 * mistakes_left / len(min_left)
+        elif max_right.size:
+            mark = 10 - 5 * mistakes_right / len(min_right)
         else:
-            rep_capture_error = 0
-            index_number_l = len(max_left_id)
+            mark = 0
 
-        for i in range(index_number_l):
-            if filtered_left_angles[max_left_id[i+ rep_capture_error]] < 80:
-                not_low_enough_l += 1
-            if filtered_left_angles[min_left_id[i ]] > 30:
-                not_high_enough_l += 1
+        # Trimite la GPT un mesaj clar
+        response = self.client.chat.completions.create(
+            model="openai/gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert analyzing lateral raise exercise based on angles and marks. "
+                            "Generate a clear, concise feedback message."
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Lateral raise analysis: left min angles {min_left}, left max angles {max_left}, "
+                        f"right min angles {min_right}, right max angles {max_right}, "
+                        f"mark: {mark}, mistakes left: {mistakes_left}, mistakes right: {mistakes_right}."
+                    )
+                }
+            ],
+            temperature=0.4,
+            max_tokens=150,
+            top_p=1
+        )
+        message = response.choices[0].message.content
+        print(message)
+        print(f"Mark: {mark}")
 
-        number_of_mistakes_l = not_high_enough_l + not_low_enough_l
-        mark_l = 10 - 5 * number_of_mistakes_l / index_number_l
-
-
-
-
-
-        if len(min_right_id) <= len(max_right_id):
-            rep_capture_error = 0
-            index_number_r = len(min_right_id)
-        else:
-            rep_capture_error = 1
-            index_number_r = len(max_right_id)
-
-        for i in range(index_number_r):
-            if filtered_right_angles[max_right_id[i]] < 80:
-                not_low_enough_r += 1
-            if filtered_right_angles[min_right_id[i + rep_capture_error]] > 30:
-                not_high_enough_r += 1
-        number_of_mistakes_r = not_high_enough_r + not_low_enough_r
-        mark_r = 10 - 5 * number_of_mistakes_r / index_number_r
-
-
-        mark = (mark_r+mark_l)/2
-        
-        if not_low_enough_l == 0 and not_high_enough_l == 0 and not_low_enough_r == 0 and not_high_enough_r == 0:
-            message = "Perfect form!"
-        elif (not_low_enough_l != 0 or not_low_enough_r != 0) and (not_high_enough_l != 0 and not_high_enough_r != 0):
-            message = "You need to work on your form, try to lower your arms more and raise them higher."
-        elif not_low_enough_l != 0 or not_low_enough_r != 0:
-            message = "You need to work on your form, try to lower your arms more." 
-        else:
-            message = "You need tro work on your form, try to raise your arms higher."
-        print(not_high_enough_l, not_high_enough_r, not_low_enough_l, not_low_enough_r)   
-        
         return mark, message
     
     def getRightArm(self):

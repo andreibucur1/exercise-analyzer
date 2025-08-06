@@ -29,15 +29,24 @@
                 <label for="video">Video file (.mp4):</label>
                 <input type="file" name="video" id="video" accept=".mp4" required>
 
-                <div class="exercise-group">
-                    <label>Select the exercise:</label>
-                    <input class="radio-btn" type="radio" id="bicepBtn" name="exercise" value="bicepCurl" required>
+            <div class="exercise-group">
+                <label>Select the exercise:</label>
+
+                <div class="radio-option">
+                    <input type="radio" id="bicepBtn" name="exercise" value="bicepCurl" required>
                     <label for="bicepBtn">Biceps Curl</label>
-                    <input class="radio-btn" type="radio" id="tricepBtn" name="exercise" value="tricepExtension">
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="tricepBtn" name="exercise" value="tricepExtension">
                     <label for="tricepBtn">Triceps Extension</label>
-                    <input class="radio-btn" type="radio" id="shoulderBtn" name="exercise" value="lateralRaise">
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="shoulderBtn" name="exercise" value="lateralRaise">
                     <label for="shoulderBtn">Lateral Raise</label>
                 </div>
+            </div>
 
                 <button type="submit">📤 Send Video</button>
             </form>

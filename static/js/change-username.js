@@ -1,5 +1,6 @@
 const loginForm = document.getElementById('Form');
-const username = document.getElementById('username');
+const oldusername = document.getElementById('oldusername');
+const newusername = document.getElementById('newusername');
 const password = document.getElementById('password');
 
 

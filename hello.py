@@ -141,20 +141,26 @@ def logout():
 @login_required
 def change_username():
     if request.method == "POST":
-        username = request.form.get("username")
+        old_username = request.form.get("oldusername")
+        new_username = request.form.get("newusername")
         password = request.form.get("password")
         
-        existing_user = db.session.execute(db.select(User).where(User.username == username)).scalar()
+        username_taken = db.session.execute(db.select(User).where(User.username == new_username)).scalar()
+        existing_user = db.session.execute(db.select(User).where(User.username == old_username)).scalar()
 
-        if existing_user:
+
+        if username_taken:
             return jsonify(success=False, error="Username already exists")
+        
+        
 
         if not check_password_hash(existing_user.password, password):
             return jsonify(success=False, error="Incorrect password")
-        
-        print("^^^^^^^^^^^^^^^lala")
-        login_user(existing_user)
-        return jsonify(success=True, message="Login successful", name = username)
+
+
+        existing_user.username = new_username
+        db.session.commit()
+        return jsonify(success=True, message="Login successful", name = new_username)
         
     return render_template("change-username.html")
 

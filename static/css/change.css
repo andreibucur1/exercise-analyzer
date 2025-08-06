@@ -13,11 +13,13 @@ body {
     position: relative;
 }
 
-/* Fundal gym-themed */
+/* Gym-themed background with aggressive color palette */
 .bg-wrapper {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: -2;
     background: 
         linear-gradient(rgba(46, 46, 46, 0.9), rgba(46, 46, 46, 0.95)),
@@ -68,17 +70,162 @@ body {
     }
 }
 
-/* Centrare formular */
+/* Navigation with aggressive styling */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(46, 46, 46, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(164, 222, 2, 0.3);
+    padding: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2em;
+    font-weight: 400;
+    color: #FFFFFF;
+    text-decoration: none;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-transform: uppercase;
+}
+
+.logo-icon {
+    font-size: 1.3em;
+}
+
+.logo .highlight {
+    background: linear-gradient(45deg, #A4DE02, #8ABE02);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.nav-link {
+    color: #7D7D7D;
+    text-decoration: none;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    position: relative;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-link:hover {
+    color: #A4DE02;
+    text-shadow: 0 0 10px rgba(164, 222, 2, 0.3);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(45deg, #A4DE02, #8ABE02);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(164, 222, 2, 0.5);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-auth {
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-family: 'Russo One', sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-login {
+    background: transparent;
+    color: #FFFFFF;
+    border: 2px solid rgba(164, 222, 2, 0.4);
+}
+
+.btn-login:hover {
+    background: rgba(164, 222, 2, 0.1);
+    border-color: #A4DE02;
+    color: #A4DE02;
+    box-shadow: 0 0 20px rgba(164, 222, 2, 0.3);
+}
+
+.btn-register {
+    background: linear-gradient(135deg, #A4DE02, #8ABE02);
+    color: #2E2E2E;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #A4DE02;
+    font-weight: 400;
+}
+
+.btn-register::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-register:hover::before {
+    left: 100%;
+}
+
+.btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(164, 222, 2, 0.4);
+}
+
+/* Main content area */
 main {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 140px 20px 20px 20px;
 }
 
-/* Container formular */
-.login-container {
+/* Container for change password form */
+.change-container {
     background: rgba(46, 46, 46, 0.9);
     border: 2px solid rgba(164, 222, 2, 0.3);
     border-radius: 0;
@@ -92,8 +239,8 @@ main {
     overflow: hidden;
 }
 
-/* Linie decorativă sus */
-.login-container::before {
+/* Decorative top line */
+.change-container::before {
     content: '';
     position: absolute;
     top: 0; left: 0;
@@ -101,12 +248,12 @@ main {
     background: linear-gradient(90deg, transparent, rgba(164, 222, 2, 0.8), transparent);
 }
 
-/* Header formular */
-.login-header {
+/* Form header */
+.change-header {
     margin-bottom: 40px;
 }
 
-.login-header h1 {
+.change-header h1 {
     font-family: 'Russo One', sans-serif;
     font-size: 2.5em;
     font-weight: 400;
@@ -120,7 +267,7 @@ main {
     background-clip: text;
 }
 
-.login-header p {
+.change-header p {
     font-family: 'Staatliches', sans-serif;
     color: #7D7D7D;
     font-size: 1.1em;
@@ -128,13 +275,13 @@ main {
     letter-spacing: 1px;
 }
 
-/* Grupe formular */
+/* Form groups */
 .form-group {
     margin-bottom: 25px;
     text-align: left;
 }
 
-/* Label-uri */
+/* Labels */
 label {
     display: block;
     margin-bottom: 10px;
@@ -145,8 +292,8 @@ label {
     letter-spacing: 1px;
 }
 
-/* Input-uri */
-input {
+/* Input fields */
+input[type="password"], input[type="email"], input[type="text"] {
     width: 100%;
     padding: 18px 20px;
     background: rgba(46, 46, 46, 0.8);
@@ -159,7 +306,7 @@ input {
     backdrop-filter: blur(10px);
 }
 
-input:focus {
+input[type="password"]:focus, input[type="email"]:focus, input[type="text"]:focus {
     outline: none;
     border-color: #A4DE02;
     background: rgba(46, 46, 46, 0.9);
@@ -173,8 +320,8 @@ input::placeholder {
     letter-spacing: 1px;
 }
 
-/* Buton */
-button {
+/* Primary button */
+.btn-primary, button {
     background: linear-gradient(135deg, #A4DE02, #8ABE02);
     color: #2E2E2E;
     border: none;
@@ -194,7 +341,7 @@ button {
     box-shadow: 0 8px 30px rgba(164, 222, 2, 0.3);
 }
 
-button::before {
+.btn-primary::before, button::before {
     content: '';
     position: absolute;
     top: 0; left: -100%;
@@ -203,39 +350,240 @@ button::before {
     transition: left 0.5s;
 }
 
-button:hover::before {
+.btn-primary:hover::before, button:hover::before {
     left: 100%;
 }
 
-button:hover {
+.btn-primary:hover, button:hover {
     transform: translateY(-4px);
     box-shadow: 0 15px 45px rgba(164, 222, 2, 0.5);
 }
 
-/* Responsive */
+/* Secondary button */
+.btn-secondary {
+    background: transparent;
+    color: #FFFFFF;
+    padding: 20px 40px;
+    border-radius: 0;
+    font-size: 1.1em;
+    font-family: 'Russo One', sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+    border: 2px solid rgba(125, 125, 125, 0.4);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: rgba(164, 222, 2, 0.1);
+    border-color: #A4DE02;
+    color: #A4DE02;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(164, 222, 2, 0.2);
+}
+
+/* Success/Error messages */
+.message {
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    border-radius: 0;
+    font-family: 'Staatliches', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+}
+
+.message.success {
+    background: rgba(164, 222, 2, 0.1);
+    border: 2px solid rgba(164, 222, 2, 0.3);
+    color: #A4DE02;
+}
+
+.message.error {
+    background: rgba(255, 69, 58, 0.1);
+    border: 2px solid rgba(255, 69, 58, 0.3);
+    color: #FF453A;
+}
+
+/* Form validation styles */
+input.error {
+    border-color: #FF453A;
+    background: rgba(255, 69, 58, 0.05);
+}
+
+input.success {
+    border-color: #A4DE02;
+    background: rgba(164, 222, 2, 0.05);
+}
+
+/* Back link */
+.back-link {
+    display: inline-block;
+    margin-top: 25px;
+    color: #7D7D7D;
+    text-decoration: none;
+    font-family: 'Staatliches', sans-serif;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    color: #A4DE02;
+    text-shadow: 0 0 10px rgba(164, 222, 2, 0.3);
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-    .login-container {
+    .nav-container {
+        padding: 0 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .nav-links {
+        gap: 25px;
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .auth-buttons {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-auth {
+        padding: 12px 24px;
+        font-size: 0.8em;
+    }
+    
+    .change-container {
         padding: 30px 25px;
         margin: 0 15px;
     }
-    .login-header h1 {
+    
+    .change-header h1 {
         font-size: 2em;
     }
-    input {
+    
+    input[type="password"], input[type="email"], input[type="text"] {
         padding: 15px 18px;
     }
-    button {
+    
+    .btn-primary, button, .btn-secondary {
         padding: 18px 35px;
+    }
+
+    main {
+        padding: 120px 20px 20px 20px;
     }
 }
 
-/* Selectie */
+/* Selection styling */
 ::selection {
     background: rgba(164, 222, 2, 0.3);
     color: #2E2E2E;
 }
 
-/* Scroll lin */
+/* Smooth scrolling */
 html {
     scroll-behavior: smooth;
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 10px;
+    font-family: 'Staatliches', sans-serif;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.password-strength.weak {
+    color: #FF453A;
+}
+
+.password-strength.medium {
+    color: #FF9500;
+}
+
+.password-strength.strong {
+    color: #A4DE02;
+}
+
+/* Show/Hide password toggle */
+.password-toggle {
+    position: relative;
+}
+
+.toggle-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #7D7D7D;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 5px;
+    transition: all 0.3s ease;
+    width: auto;
+    margin: 0;
+}
+
+.toggle-btn:hover {
+    color: #A4DE02;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: none;
+}
+
+/* Progress indicator */
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.step {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(125, 125, 125, 0.3);
+    transition: all 0.3s ease;
+}
+
+.step.active {
+    background: linear-gradient(45deg, #A4DE02, #8ABE02);
+    box-shadow: 0 0 15px rgba(164, 222, 2, 0.5);
+}
+
+.step.completed {
+    background: #A4DE02;
+}
+
+/* Loading spinner */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(46, 46, 46, 0.3);
+    border-radius: 50%;
+    border-top-color: #A4DE02;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

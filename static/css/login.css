@@ -80,7 +80,7 @@ main {
     padding: 20px;
 }
 
-.login-container {
+.change-container {
     background: rgba(46, 46, 46, 0.9);
     border: 2px solid rgba(164, 222, 2, 0.3);
     border-radius: 0;
@@ -94,7 +94,7 @@ main {
     overflow: hidden;
 }
 
-.login-container::before {
+.change-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -104,11 +104,11 @@ main {
     background: linear-gradient(90deg, transparent, rgba(164, 222, 2, 0.8), transparent);
 }
 
-.login-header {
+.change-header {
     margin-bottom: 40px;
 }
 
-.login-header h1 {
+.change-header h1 {
     font-family: 'Russo One', sans-serif;
     font-size: 2.5em;
     font-weight: 400;
@@ -122,7 +122,7 @@ main {
     background-clip: text;
 }
 
-.login-header p {
+.change-header p {
     font-family: 'Staatliches', sans-serif;
     color: #7D7D7D;
     font-size: 1.1em;
@@ -280,12 +280,12 @@ button:hover {
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-    .login-container {
+    .change-container {
         padding: 30px 25px;
         margin: 0 15px;
     }
     
-    .login-header h1 {
+    .change-header h1 {
         font-size: 2em;
     }
     

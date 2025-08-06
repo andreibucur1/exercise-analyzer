@@ -63,7 +63,11 @@ nav {
 }
 
 .logo-icon {
-    font-size: 1.3em;
+    font-size: 0.5em;
+    width: 60px;          
+    height: 60px;         
+    object-fit: contain;  
+    display: inline-block;
 }
 
 .logo .highlight {

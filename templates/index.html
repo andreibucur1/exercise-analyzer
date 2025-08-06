@@ -11,16 +11,12 @@
     <div class="bg-wrapper"></div>
 
     <nav>
-        <div class="nav-container">
-            <a href="/" class="logo">
-                <span class="logo-icon">🏋️</span>
-                Coach<span class="highlight">Form</span>
-            </a>
-            
-            <div class="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#exercises" class="nav-link">Exercises</a>
-            </div>
+    <div class="nav-container">
+        <a href="/" class="logo">
+        <img src="/static/images/logo.png" alt="CoachForm Logo" class="logo-icon">
+        Coach<span class="highlight">Form</span>
+        </a>
+
             
             <div class="auth-buttons">
             {% if not current_user.is_authenticated %}
