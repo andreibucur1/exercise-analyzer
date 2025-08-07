@@ -65,6 +65,7 @@ fetch('/api/exercise-data', {
     const bicepData = data.results.filter(result => result.exercise === 'bicepCurl');
     const tricepData = data.results.filter(result => result.exercise === 'tricepExtension');
     const shoulderData = data.results.filter(result => result.exercise === 'lateralRaise');
+    const shoulderPressData = data.results.filter(result => result.exercise === 'shoulderPress');
 
     if (bicepData.length > 0) {
         const bicepDates = bicepData.map(result => formatDate(result.timestamp));
@@ -97,5 +98,16 @@ fetch('/api/exercise-data', {
             Math.max(...shoulderData.map(r => r.mark)).toFixed(1);
         document.getElementById('lateralRaiseTotal').textContent = 
             shoulderData.length;
+    }
+
+    if (shoulderPressData.length > 0) {
+        const shoulderPressDates = shoulderPressData.map(result => formatDate(result.timestamp));
+        createChart('shoulderPressChart', shoulderPressDates, shoulderPressData.map(result => result.mark));
+        document.getElementById('shoulderPressAvg').textContent = 
+            (shoulderPressData.reduce((sum, r) => sum + r.mark, 0) / shoulderPressData.length).toFixed(1);
+        document.getElementById('shoulderPressBest').textContent = 
+            Math.max(...shoulderPressData.map(r => r.mark)).toFixed(1);
+        document.getElementById('shoulderPressTotal').textContent = 
+            shoulderPressData.length;
     }
 })

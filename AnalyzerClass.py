@@ -10,6 +10,8 @@ import os
 import numpy as np
 from openai import OpenAI
 VISIBILITY = 0.5
+
+
 class ExerciseAnalyzer():
     def __init__(self):
         self.detector = PostureDetector()
@@ -142,25 +144,25 @@ class ExerciseAnalyzer():
         message = response.choices[0].message.content
         return mark, message
 
-    def checkTricepExtension(self, left_arm_angles, right_arm_angles):
+    def checkTricepExtension(self, left_arm_angles, right_arm_angles, left_arm_is_visible, right_arm_is_visible):
         mistakes_left = 0
         mistakes_right = 0
         max_left = []
         min_left = []
         max_right = []
         min_right = []
-        if len(left_arm_angles) > 20:
+        if left_arm_is_visible:
             filtered_left = savgol_filter(left_arm_angles, window_length=20, polyorder=2, mode="nearest")
             max_left = np.round(filtered_left[find_peaks(filtered_left)[0]], 0)
             min_left = np.round(filtered_left[find_peaks(-filtered_left)[0]], 0)
             for angle in max_left:
-                if angle < 165:  # pragul pentru extensia triceps
+                if angle < 165:  
                     mistakes_left += 1
             for angle in min_left:
                 if angle > 90:
                     mistakes_left += 1
 
-        if len(right_arm_angles) > 20:
+        if right_arm_is_visible:
             filtered_right = savgol_filter(right_arm_angles, window_length=20, polyorder=2, mode="nearest")
             max_right = np.round(filtered_right[find_peaks(filtered_right)[0]], 0)
             min_right = np.round(filtered_right[find_peaks(-filtered_right)[0]], 0)
@@ -171,23 +173,22 @@ class ExerciseAnalyzer():
                 if angle > 90:
                     mistakes_right += 1
 
-        # Calculează punctajul
-        if max_left.size and max_right.size:
+
+        if left_arm_is_visible and right_arm_is_visible:
             mark = 10 - 5 * (mistakes_left + mistakes_right) / min(len(min_left), len(min_right))
-        elif max_left.size:
+        elif left_arm_is_visible:
             mark = 10 - 5 * mistakes_left / len(min_left)
-        elif max_right.size:
+        elif right_arm_is_visible:
             mark = 10 - 5 * mistakes_right / len(min_right)
         else:
             mark = 0
 
-        # Trimite la GPT un mesaj clar
         response = self.client.chat.completions.create(
             model="openai/gpt-4o",
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an expert analyzing tricep extension exercise based on angles and marks. "
+                    "content": "You are an expert analyzing tricep extension exercise based on angles and marks. if an array is empty = visibility of an arm is low, mention that."
                             "Generate a clear, concise feedback message."
                 },
                 {
@@ -209,7 +210,7 @@ class ExerciseAnalyzer():
 
         return mark, message
     
-    def checkLateralRaises(self, left_shoulder_angles, right_shoulder_angles):
+    def checkLateralRaises(self, left_shoulder_angles, right_shoulder_angles, left_arm_is_visible, right_arm_is_visible):
         mistakes_left = 0
         mistakes_right = 0
         max_left = []
@@ -217,19 +218,19 @@ class ExerciseAnalyzer():
         max_right = []
         min_right = []
 
-        if len(left_shoulder_angles) > 20:
+        if left_arm_is_visible:
             filtered_left = savgol_filter(left_shoulder_angles, window_length=20, polyorder=2, mode="nearest")
             max_left = np.round(filtered_left[find_peaks(filtered_left)[0]], 0)
             min_left = np.round(filtered_left[find_peaks(-filtered_left)[0]], 0)
             for angle in max_left:
-                if angle < 80:  # prag pentru lateral raise
+                if angle < 80: 
                     mistakes_left += 1
             for angle in min_left:
                 if angle > 30:
                     mistakes_left += 1
 
 
-        if len(right_shoulder_angles) > 20:
+        if right_arm_is_visible:
             filtered_right = savgol_filter(right_shoulder_angles, window_length=20, polyorder=2, mode="nearest")
             max_right = np.round(filtered_right[find_peaks(filtered_right)[0]], 0)
             min_right = np.round(filtered_right[find_peaks(-filtered_right)[0]], 0)
@@ -241,23 +242,21 @@ class ExerciseAnalyzer():
                     mistakes_right += 1
 
 
-        # Calculează punctajul
-        if max_left.size and max_right.size:
+        if right_arm_is_visible and left_arm_is_visible:
             mark = 10 - 5 * (mistakes_left + mistakes_right) / min(len(min_left), len(min_right))
-        elif max_left.size:
+        elif left_arm_is_visible:
             mark = 10 - 5 * mistakes_left / len(min_left)
-        elif max_right.size:
+        elif right_arm_is_visible:
             mark = 10 - 5 * mistakes_right / len(min_right)
         else:
             mark = 0
 
-        # Trimite la GPT un mesaj clar
         response = self.client.chat.completions.create(
             model="openai/gpt-4o",
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an expert analyzing lateral raise exercise based on angles and marks. "
+                    "content": "You are an expert analyzing lateral raise exercise based on angles and marks. if an array is empty = visibility of an arm is low, mention that."
                             "Generate a clear, concise feedback message."
                 },
                 {
@@ -278,6 +277,74 @@ class ExerciseAnalyzer():
         print(f"Mark: {mark}")
 
         return mark, message
+    
+    def checkShoudlerPress(self, left_shoulder_angles, right_shoulder_angles, left_arm_is_visible, right_arm_is_visible):
+        mistakes_left = 0
+        mistakes_right = 0
+        max_left = []
+        min_left = []
+        max_right = []
+        min_right = []
+
+        if left_arm_is_visible:
+            filtered_left = savgol_filter(left_shoulder_angles, window_length=20, polyorder=2, mode="nearest")
+            max_left = np.round(filtered_left[find_peaks(filtered_left)[0]], 0)
+            min_left = np.round(filtered_left[find_peaks(-filtered_left)[0]], 0)
+            for angle in max_left:
+                if angle < 80: 
+                    mistakes_left += 1
+            for angle in min_left:
+                if angle > 30:
+                    mistakes_left += 1
+
+
+        if right_arm_is_visible:
+            filtered_right = savgol_filter(right_shoulder_angles, window_length=20, polyorder=2, mode="nearest")
+            max_right = np.round(filtered_right[find_peaks(filtered_right)[0]], 0)
+            min_right = np.round(filtered_right[find_peaks(-filtered_right)[0]], 0)
+            for angle in max_right:
+                if angle < 80:
+                    mistakes_right += 1
+            for angle in min_right:
+                if angle > 30:
+                    mistakes_right += 1
+
+
+        if right_arm_is_visible and left_arm_is_visible:
+            mark = 10 - 5 * (mistakes_left + mistakes_right) / min(len(min_left), len(min_right))
+        elif left_arm_is_visible:
+            mark = 10 - 5 * mistakes_left / len(min_left)
+        elif right_arm_is_visible:
+            mark = 10 - 5 * mistakes_right / len(min_right)
+        else:
+            mark = 0
+
+        response = self.client.chat.completions.create(
+            model="openai/gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert analyzing shoulder press exercise based on angles and marks. if an array is empty = visibility of an arm is low, mention that."
+                            "Generate a clear, concise feedback message."
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Shoulder press analysis: left min angles {min_left}, left max angles {max_left}, "
+                        f"right min angles {min_right}, right max angles {max_right}, "
+                        f"mark: {mark}, mistakes left: {mistakes_left}, mistakes right: {mistakes_right}."
+                    )
+                }
+            ],
+            temperature=0.4,
+            max_tokens=150,
+            top_p=1
+        )
+        message = response.choices[0].message.content
+        print(message)
+        print(f"Mark: {mark}")  
+        return mark, message
+
     
     def getRightArm(self):
 

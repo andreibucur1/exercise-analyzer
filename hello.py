@@ -80,8 +80,7 @@ def login():
 
         if not check_password_hash(existing_user.password, password):
             return jsonify(success=False, error="Incorrect password")
-        
-        print("^^^^^^^^^^^^^^^lala")
+
         login_user(existing_user)
         return jsonify(success=True, message="Login successful", name = username)
         
@@ -96,8 +95,6 @@ def register():
         email = request.form.get("email")
         password = request.form.get("password")
         confirm_password = request.form.get("confirm-password")
-
-        print(f"Debug - Received data: username={username}, email={email}")  # pentru debug
 
         if not username or not email or not password or not confirm_password:
             return jsonify(success=False, error="All fields are required")
@@ -168,6 +165,26 @@ def change_username():
 @app.route("/change-password", methods=["GET", "POST"])
 @login_required
 def change_password():
+    if request.method == "POST":
+        username = request.form.get("username")
+        old_password = request.form.get("oldpassword")
+        new_password = request.form.get("newpassword")
+
+        existing_user = db.session.execute(db.select(User).where(User.username == username)).scalar()
+        if not existing_user:
+            return jsonify(success=False, error="User not found")
+        
+        if not check_password_hash(existing_user.password, old_password):
+            return jsonify(success=False, error="Incorrect old password")
+        
+        if len(new_password) < 6:
+            return jsonify(success=False, error="New password must be at least 6 characters long")
+        
+        if new_password == old_password:
+            return jsonify(success=False, error="New password cannot be the same as old password")
+        
+        existing_user.password = generate_password_hash(new_password, method='pbkdf2:sha256', salt_length=8)
+        db.session.commit()
     return render_template("change-password.html")
 
 @app.route("/upload")
@@ -182,11 +199,8 @@ def analyze():
         return jsonify(success=False, message="No video file provided"), 400
     
     video = request.files['video']
-    # trebuie sa salvez video-ul in upload folder si dupa sa-l sterg
 
     
-
-
     if video.filename == '':
         return jsonify(success=False, message="Empty file name"), 400
     

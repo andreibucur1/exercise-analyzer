@@ -1,6 +1,7 @@
 const loginForm = document.getElementById('Form');
-const username = document.getElementById('new-username');
-const password = document.getElementById('password');
+const oldusername = document.getElementById('username');
+const oldpassword = document.getElementById('oldpassword');
+const newpassword = document.getElementById('newpassword');
 
 
 loginForm.addEventListener('submit', function(event) {
