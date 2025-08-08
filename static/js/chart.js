@@ -109,5 +109,17 @@ fetch('/api/exercise-data', {
             Math.max(...shoulderPressData.map(r => r.mark)).toFixed(1);
         document.getElementById('shoulderPressTotal').textContent = 
             shoulderPressData.length;
+
+    }
+
+    if (legPressData.length > 0) {
+        const legPressDates = legPressData.map(result => formatDate(result.timestamp));
+        createChart('legPressChart', legPressDates, legPressData.map(result => result.mark));
+        document.getElementById('legPressAvg').textContent = 
+            (legPressData.reduce((sum, r) => sum + r.mark, 0) / legPressData.length).toFixed(1);
+        document.getElementById('legPressBest').textContent = 
+            Math.max(...legPressData.map(r => r.mark)).toFixed(1);
+        document.getElementById('legPressTotal').textContent = 
+            legPressData.length;
     }
 })

@@ -25,8 +25,12 @@ class ExerciseAnalyzer():
         r_arm_angles=[]
         l_shoulder_angles=[]
         r_shoulder_angles=[]
+        l_leg_angles=[]
+        r_leg_angles=[]
         left_arm_is_visible = True
         right_arm_is_visible = True
+        left_leg_is_visible = True
+        right_leg_is_visible = True
         while True:
             succes, img = cap.read()
             if not succes:
@@ -39,10 +43,17 @@ class ExerciseAnalyzer():
                 r_arm_angles.append(self.getRightArm())
                 l_shoulder_angles.append(self.getLeftShoulder())
                 r_shoulder_angles.append(self.getRightShoulder())
+                l_leg_angles.append(self.getLeftLeg)
+                r_leg_angles.append(self.getRightLeg)
                 if(self.lmlist[13][3] < VISIBILITY):
                     left_arm_is_visible = False
                 if(self.lmlist[14][3] < VISIBILITY):    
                     right_arm_is_visible = False
+                if(self.lmlist[25][3] < VISIBILITY):
+                    left_leg_is_visible = False
+                if(self.lmlist[26][3] < VISIBILITY):
+                    right_leg_is_visible = False
+                
                 
 
             cv2.imshow("Image", img)
@@ -53,9 +64,13 @@ class ExerciseAnalyzer():
             case "bicepCurl":
                 mark, message = self.checkBicepCurl(l_arm_angles, r_arm_angles, left_arm_is_visible, right_arm_is_visible)
             case "tricepExtension":
-                mark, message = self.checkTricepExtension(l_arm_angles, r_arm_angles)
+                mark, message = self.checkTricepExtension(l_arm_angles, r_arm_angles, left_arm_is_visible, right_arm_is_visible)
             case "lateralRaise":
-                mark, message = self.checkLateralRaises(l_shoulder_angles, r_shoulder_angles)
+                mark, message = self.checkLateralRaises(l_shoulder_angles, r_shoulder_angles, left_arm_is_visible, right_arm_is_visible)
+            case "shoulderPress":
+                mark, message = self.checkShoudlerPress(l_shoulder_angles, r_shoulder_angles, left_arm_is_visible, right_arm_is_visible)
+            case "legPress":
+                mark, message = self.checkLegPress(l_leg_angles, r_leg_angles, left_leg_is_visible, right_leg_is_visible)
             case _:
                 mark, message = 0, "Unknown exercise"
         
@@ -344,6 +359,70 @@ class ExerciseAnalyzer():
         print(message)
         print(f"Mark: {mark}")  
         return mark, message
+    
+    def checkLegPress(self, left_leg_angles, right_leg_angles, left_leg_is_visible, right_leg_is_visible):
+        mistakes_left = 0
+        mistakes_right = 0
+        max_left = []
+        min_left = []
+        max_right = []
+        min_right = []
+
+        if left_leg_is_visible:
+            filtered_left = savgol_filter(left_leg_angles, window_length=20, polyorder=2, mode="nearest")
+            max_left = np.round(filtered_left[find_peaks(filtered_left)[0]], 0)
+            min_left = np.round(filtered_left[find_peaks(-filtered_left)[0]], 0)
+            for angle in max_left:
+                if angle < 160:  
+                    mistakes_left += 1
+            for angle in min_left:
+                if angle > 90:
+                    mistakes_left += 1
+
+        if right_leg_is_visible:
+            filtered_right = savgol_filter(right_leg_angles, window_length=20, polyorder=2, mode="nearest")
+            max_right = np.round(filtered_right[find_peaks(filtered_right)[0]], 0)
+            min_right = np.round(filtered_right[find_peaks(-filtered_right)[0]], 0)
+            for angle in max_right:
+                if angle < 160:
+                    mistakes_right += 1
+            for angle in min_right:
+                if angle > 90:
+                    mistakes_right += 1
+
+
+        if left_leg_is_visible and right_leg_is_visible:
+            mark = 10 - 5 * (mistakes_left + mistakes_right) / min(len(min_left), len(min_right))
+        elif left_leg_is_visible:
+            mark = 10 - 5 * mistakes_left / len(min_left)
+        elif right_leg_is_visible:
+            mark = 10 - 5 * mistakes_right / len(min_right)
+        else:
+            mark = 0
+
+        response = self.client.chat.completions.create(
+            model="openai/gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert analyzing leg press exercise based on angles and marks. if an array is empty = visibility of a leg is low, mention that."
+                            "Generate a clear, concise feedback message."
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Squat analysis: left min angles {min_left}, left max angles {max_left}, "
+                        f"right min angles {min_right}, right max angles {max_right}, "
+                        f"mark: {mark}, mistakes left: {mistakes_left}, mistakes right: {mistakes_right}."
+                    )   
+                }
+            ],
+            temperature=0.4,
+            max_tokens=150,
+            top_p=1
+        )
+        message = response.choices[0].message.content
+        return mark, message
 
     
     def getRightArm(self):
@@ -375,3 +454,17 @@ class ExerciseAnalyzer():
         right_hip = self.lmlist[24][1:3]
         right_shoulder_angle = self.findAngle(right_elbow,right_shoulder,  right_hip)
         return right_shoulder_angle
+
+    def getLeftLeg(self):
+        left_hip = self.lmlist[23][1:3]
+        left_knee = self.lmlist[25][1:3]
+        left_ankle = self.lmlist[27][1:3]
+        left_leg_angle = self.findAngle(left_hip, left_knee, left_ankle)
+        return left_leg_angle
+    
+    def getRightLeg(self):
+        right_hip = self.lmlist[24][1:3]
+        right_knee = self.lmlist[26][1:3]
+        right_ankle = self.lmlist[28][1:3]
+        right_leg_angle = self.findAngle(right_hip, right_knee, right_ankle)
+        return right_leg_angle
